@@ -1,24 +1,21 @@
 FROM php:7.4-apache
 
 RUN docker-php-ext-install mysqli pdo pdo_mysql
-
-# Enable Apache rewrite
 RUN a2enmod rewrite
+
+# Set Apache document root to /public
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+
+# Update Apache config
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
 
 # Copy project
 COPY . /var/www/html/
 
-# Set correct working directory (IMPORTANT)
 WORKDIR /var/www/html
 
-# Fix permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
-
-# Allow access
-RUN echo "<Directory /var/www/html>\n\
-    AllowOverride All\n\
-    Require all granted\n\
-</Directory>" >> /etc/apache2/apache2.conf
 
 EXPOSE 80
