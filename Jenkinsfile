@@ -14,11 +14,11 @@ pipeline {
         }
 
         stage('Clone Repo') {
-            steps {
-                git 'https://github.com/laxmisah736/hackazon-fork.git'
-            }
-        }
-
+    steps {
+        sh 'rm -rf *'
+        sh 'git clone https://github.com/laxmisah736/hackazon-fork.git .'
+    }
+}
         stage('Verify Docker') {
             steps {
                 sh 'docker --version'
